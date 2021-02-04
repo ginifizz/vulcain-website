@@ -10,7 +10,7 @@ module.exports = {
     return [
       {
         source: '/docs',
-        destination: '/docs/README',
+        destination: '/docs/getting-started',
         permanent: true,
       },
       {

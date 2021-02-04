@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   appBar: {
     display: 'flex',
     flexDirection: 'row',
@@ -94,6 +94,9 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     clipPath: 'polygon(0% 0, 100% 0, 100% 100%)',
   },
+  octoArm: {
+    transformOrigin: '130px 106px',
+  },
   ribbon: {
     width: '300px',
     background: theme.palette.secondary.main,
@@ -103,23 +106,20 @@ const useStyles = makeStyles((theme) => ({
     top: '40px',
     right: '-105px',
     transform: 'rotate(45deg)',
-    zIndex: '0',
+    zIndex: 0,
     textTransform: 'uppercase',
     color: `${theme.palette.getContrastText(theme.palette.secondary.main)}!important`,
   },
   octoSvg: {
-    zIndex: '0',
+    zIndex: 0,
     position: 'absolute',
-    top: '0px',
+    top: '0',
     right: '0',
     border: '0',
   },
-  octoArm: {
-    transformOrigin: '130px 106px',
-  },
   userMenuLink: {
     '& > a': {
-      color: theme.palette.textPrimary.main,
+      color: theme.palette.text.primary,
     },
     '& > a:hover': {
       textDecoration: 'none',

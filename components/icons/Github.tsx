@@ -1,7 +1,7 @@
 import React from 'react';
 import { SvgIcon } from '@material-ui/core';
 
-const GithubIcon = (props) => (
+const GithubIcon: React.ComponentType = (props) => (
   <SvgIcon {...props}>
     <path
       d="M8.3,18.7c0,0.1-0.1,0.2-0.2,0.2c-0.1,0-0.3-0.1-0.3-0.2c0-0.1,0.1-0.2,0.2-0.2C8.2,18.5,8.3,18.6,8.3,18.7z M6.9,18.5

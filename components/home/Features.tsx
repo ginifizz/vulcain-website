@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Typography, Container, Grid } from '@material-ui/core';
+import { Typography, Container, Grid, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   LockOutlined,
@@ -16,14 +15,13 @@ import {
   Storage,
   Speed,
 } from '@material-ui/icons';
-import useAnimation from '../../hooks/useAnimation';
+import useAnimation, { DirectionType } from '../../hooks/useAnimation';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     padding: theme.spacing(8, 0),
     backgroundColor: theme.palette.grey[100],
-    overflowX: 'hidden',
-    overflowY: 'none',
+    overflow: 'hidden',
   },
   title: {
     marginBottom: theme.spacing(10),
@@ -81,7 +79,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FeatureItem = ({ title, Icon, classes, direction }) => {
+interface FeatureItemProps {
+  title: string;
+  Icon: React.ElementType;
+  classes: any;
+  direction?: DirectionType;
+}
+
+const FeatureItem: React.ComponentType<FeatureItemProps> = ({ title, Icon, classes, direction }) => {
   const animation = useAnimation(direction, { rootMargin: '-10%' });
   return (
     <Grid item xs={12} sm={4} md={3} lg={2} className={classes.featureItem} ref={animation}>
@@ -95,14 +100,7 @@ const FeatureItem = ({ title, Icon, classes, direction }) => {
   );
 };
 
-FeatureItem.propTypes = {
-  title: PropTypes.string.isRequired,
-  Icon: PropTypes.elementType.isRequired,
-  classes: PropTypes.object.isRequired,
-  direction: PropTypes.string,
-};
-
-const Features = () => {
+const Features: React.ComponentType = () => {
   const classes = useStyles();
 
   return (

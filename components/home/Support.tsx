@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Typography, Container, Grid, Button, Card, CardContent, CardActions } from '@material-ui/core';
+import { Box, Typography, Container, Grid, Button, Card, CardContent, CardActions, Theme } from '@material-ui/core';
 import Link from 'next/link';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import SlackIcon from '../icons/Slack';
@@ -8,7 +7,7 @@ import StackOverflowIcon from '../icons/StackOverflow';
 import { makeStyles } from '@material-ui/core/styles';
 import useAnimation from '../../hooks/useAnimation';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   title: {
     marginBottom: theme.spacing(6),
     textAlign: 'left',
@@ -93,7 +92,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SupportCard = ({ image, title, description, classes, children }) => {
+interface SupportCardProps {
+  image: string;
+  title: string;
+  description: string;
+  classes: any;
+  children: React.ReactNode;
+}
+
+const SupportCard: React.ComponentType<SupportCardProps> = ({ image, title, description, classes, children }) => {
   const animation = useAnimation('bottom', { rootMargin: '-10%' });
 
   return (
@@ -102,7 +109,7 @@ const SupportCard = ({ image, title, description, classes, children }) => {
         <CardContent className={classes.cardMain}>
           <Box px={2} display="flex" alignItems="center" justifyContent="center">
             <div className={classes.cardCircle}>
-              <img src={image} className={classes.cardImage} />
+              <img src={image} alt={title} className={classes.cardImage} />
             </div>
           </Box>
           <Box py={2} className={classes.cardContent}>
@@ -120,15 +127,7 @@ const SupportCard = ({ image, title, description, classes, children }) => {
   );
 };
 
-SupportCard.propTypes = {
-  image: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-};
-
-const Support = () => {
+const Support: React.ComponentType = () => {
   const classes = useStyles();
 
   return (
@@ -151,7 +150,7 @@ const Support = () => {
                   description="Reading the documentation is an excellent way to discover Vulcain."
                   image="/static/book.svg"
                 >
-                  <Link href="/docs/README" passHref>
+                  <Link href="/docs" passHref>
                     <Button size="small" color="primary" variant="outlined" component="a">
                       Read the docs
                       <KeyboardArrowRight />

@@ -2,7 +2,9 @@ import { useRef } from 'react';
 import { useIntersection } from 'react-use';
 import gsap from 'gsap';
 
-const fadeIn = (element) => {
+export type DirectionType = 'bottom' | 'left' | 'right' | 'top' | 'scale';
+
+const fadeIn = (element: gsap.TweenTarget) => {
   gsap.to(element, 1, {
     opacity: 1,
     x: 0,
@@ -12,7 +14,7 @@ const fadeIn = (element) => {
   });
 };
 
-const fadeOut = (element, direction) => {
+const fadeOut = (element: gsap.TweenTarget, direction: DirectionType) => {
   let x = 0;
   let y = 0;
   let scale = 1;
@@ -42,7 +44,7 @@ const fadeOut = (element, direction) => {
   });
 };
 
-const useAnimation = (direction, intersectionParams) => {
+const useAnimation = (direction: DirectionType, intersectionParams: { rootMargin?: string }) => {
   const ref = useRef(null);
   const intersection = useIntersection(ref, {
     root: null,

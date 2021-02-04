@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useIntersection } from 'react-use';
 import { Box, Paper } from '@material-ui/core';
 import gsap, { Sine as Cubic } from 'gsap';
 import MethodSelector from '../MethodSelector';
 import { METHODS } from '../../data/methods';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     position: 'relative',
     opacity: 0,
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Animation = () => {
+const Animation: React.ComponentType = () => {
   const container = useRef(null);
 
   const classes = useStyles();

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { join } from 'path';
 
-export function getMarkdown(directory, slug) {
+export function getMarkdown(directory: string, slug: string) {
   const fullDirectory = join(process.cwd(), directory);
   const realSlug = slug.replace(/\.md$/, '');
   const fullPath = join(fullDirectory, `${realSlug}.md`);

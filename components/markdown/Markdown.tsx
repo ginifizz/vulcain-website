@@ -1,14 +1,14 @@
 import React, { Children } from 'react';
-import PropTypes from 'prop-types';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-import { makeStyles } from '@material-ui/core/styles';
+import gfm from 'remark-gfm';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import MUILink from '@material-ui/core/Link';
 import CodeBlock from './CodeBlock';
 import Heading from './Heading';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   listItem: {
     marginTop: theme.spacing(1),
   },
@@ -33,12 +33,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+interface MarkdownProps {
+  source: string;
+}
+
 /* eslint-disable react/display-name, react/prop-types */
-const Markdown = ({ source }) => {
+const Markdown: React.ComponentType<MarkdownProps> = ({ source }) => {
   const classes = useStyles();
+  const replacer = (match, p1) => {
+    let href;
+    if (p1.startsWith('RFC')) {
+      href = `https://tools.ietf.org/html/${p1.toLowerCase()}`;
+    } else {
+      href = `https://duckduckgo.com/\?q=!ducky+site%3Aw3.org+${p1}`;
+    }
+    return `[@${p1}](${href})`;
+  };
+  const formattedSource = source.replace(/\[@!?(.*?)\]/gm, replacer);
   return (
     <ReactMarkdown
-      source={source}
+      plugins={[gfm]}
       transformImageUri={(input) =>
         /^https?:/.test(input) ? input : `https://raw.githubusercontent.com/dunglas/vulcain/master/${input}`
       }
@@ -48,10 +62,9 @@ const Markdown = ({ source }) => {
         }
 
         if (input.includes('spec/vulcain.md')) {
-          return input.replace(/(.*)#?/, '/spec');
+          return input.replace(/(.*)#?/, '/spec/vulcain');
         }
-
-        return '/docs/' + input.replace(/\.md/, '');
+        return input.replace('docs/', '/docs/').replace(/\.md/, '');
       }}
       renderers={{
         code: CodeBlock,
@@ -60,7 +73,7 @@ const Markdown = ({ source }) => {
         heading: Heading,
         listItem: ({ children }) => {
           // Paragraphs aren't allowed inside list items
-          const cleanedChildren = Children.toArray(children).map((child) => {
+          const cleanedChildren = Children.toArray(children).map((child: any) => {
             return child.type && child.type.name === 'paragraph' ? child.props.children : child;
           });
 
@@ -70,7 +83,7 @@ const Markdown = ({ source }) => {
             </li>
           );
         },
-        image: (props) => <img className={classes.image} {...props} />,
+        image: (props) => <img className={classes.image} alt={props?.alt} {...props} />,
         link: ({ href, ...props }) => {
           if (!href) {
             return props.children;
@@ -90,42 +103,10 @@ const Markdown = ({ source }) => {
             </Link>
           );
         },
-        linkReference: (reference) => {
-          // RFC and W3C references
-          const child = reference.children[0];
-          const matches = child.props.value.match(/^@!?(.+)/);
-
-          if (!matches) {
-            return `[${child.props.value}]`;
-          }
-
-          const id = matches[1];
-
-          let href;
-          if (id.startsWith('RFC')) {
-            href = `https://tools.ietf.org/html/${id.toLowerCase()}`;
-          } else {
-            href = `https://duckduckgo.com/?q=!ducky+site%3Aw3.org+${id}`;
-          }
-
-          return (
-            <React.Fragment>
-              (
-              <MUILink className={classes.link} href={href}>
-                {id}
-              </MUILink>
-              )
-            </React.Fragment>
-          );
-        },
       }}
-    />
+    >
+      {formattedSource}
+    </ReactMarkdown>
   );
 };
-/* eslint-enable react/display-name, react/prop-types */
-
-Markdown.propTypes = {
-  source: PropTypes.string.isRequired,
-};
-
 export default Markdown;

@@ -1,6 +1,5 @@
 // see https://github.com/rexxars/react-markdown/issues/69
 import React from 'react';
-import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Head from 'next/head';
 
@@ -8,7 +7,13 @@ function flatten(text, child) {
   return typeof child === 'string' ? text + child : React.Children.toArray(child.props.children).reduce(flatten, text);
 }
 
-const Heading = ({ children, level }) => {
+interface HeadingProps {
+  level: 1 | 2 | 3 | 4 | 5;
+}
+
+type TitleVariantType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
+
+const Heading: React.ComponentType<HeadingProps> = ({ children, level }) => {
   const text = React.Children.toArray(children).reduce(flatten, '');
 
   let slug, found;
@@ -19,7 +24,7 @@ const Heading = ({ children, level }) => {
 
   // TODO: Create clickable links to anchors, something like <Link href={`#${slug}`}><LinkIcon /></Link>
   const t = (
-    <Typography variant={`h${level}`} id={slug}>
+    <Typography variant={`h${level}` as TitleVariantType} id={slug}>
       {children}
     </Typography>
   );
@@ -30,20 +35,15 @@ const Heading = ({ children, level }) => {
 
   const title = t.props.children[0].props.children;
   return (
-    <React.Fragment>
+    <>
       <Head>
         <title>{title} - Vulcain.rocks</title>
         <meta name="description" content={title} />
         <meta name="og:title" content={`Vulcain.rocks: ${title}`} />
       </Head>
       {t}
-    </React.Fragment>
+    </>
   );
-};
-
-Heading.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-  level: PropTypes.number.isRequired,
 };
 
 export default Heading;

@@ -1,6 +1,4 @@
 import React from 'react';
-import matter from 'gray-matter';
-import ReactMarkdown from 'react-markdown';
 import { Drawer, Box, Hidden } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
@@ -8,9 +6,9 @@ import docTheme from '../../src/docTheme';
 import DocsMenu from '../../components/DocsMenu';
 import Markdown from '../../components/markdown/Markdown';
 import Page from '../../components/Page';
-import PropTypes from 'prop-types';
 import { getFiles } from '../../lib/getAllFolderFileNames';
 import { getMarkdown } from '../../lib/getMarkdownByFilePath';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 const drawerWidth = 240;
 
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function cleanSpec(md) {
+function cleanSpec(md: string) {
   return (
     '# Vulcain: The Specification\n' +
     md
@@ -47,7 +45,11 @@ function cleanSpec(md) {
   );
 }
 
-function PostTemplate({ content }) {
+interface SpecTemplateProps {
+  content: string;
+}
+
+const SpecTemplate: React.ComponentType<SpecTemplateProps> = ({ content }) => {
   const classes = useStyles();
 
   return (
@@ -72,28 +74,22 @@ function PostTemplate({ content }) {
       </Box>
     </Page>
   );
-}
+};
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await getFiles('spec');
-
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params;
-  const markdownPath = slug.join('/');
+  const markdownPath = typeof slug === 'string' ? slug : slug.join('/');
   const content = getMarkdown('spec', markdownPath);
-  // Import our .md file using the `slug` from the URL
-  // const content = await import(`../../spec/${slug}.md`);
-
   // Pass data to our component props
   return { props: { content: cleanSpec(content) } };
+};
 
-  return { slug };
-}
-
-export default PostTemplate;
+export default SpecTemplate;

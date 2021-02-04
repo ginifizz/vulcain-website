@@ -5,7 +5,7 @@ import Support from '../components/home/Support';
 import Features from '../components/home/Features';
 import References from '../components/home/References';
 
-const Index = () => (
+const Index: React.ComponentType = () => (
   <Page>
     <Main />
     <Features />

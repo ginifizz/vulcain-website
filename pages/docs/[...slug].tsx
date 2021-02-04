@@ -1,18 +1,18 @@
 import React from 'react';
 import { Drawer, Box, Hidden } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import docTheme from '../../src/docTheme';
 import DocsMenu from '../../components/DocsMenu';
 import Markdown from '../../components/markdown/Markdown';
 import Page from '../../components/Page';
-import PropTypes from 'prop-types';
 import { getFiles } from '../../lib/getAllFolderFileNames';
 import { getMarkdown } from '../../lib/getMarkdownByFilePath';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
@@ -31,7 +31,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function DocTemplate({ content }) {
+interface DocTemplateProps {
+  content: string;
+}
+
+const DocTemplate: React.ComponentType<DocTemplateProps> = ({ content }) => {
   const classes = useStyles();
 
   return (
@@ -56,26 +60,22 @@ function DocTemplate({ content }) {
       </Box>
     </Page>
   );
-}
+};
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await getFiles('docs');
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params;
-  const markdownPath = slug.join('/');
+  const markdownPath = typeof slug === 'string' ? slug : slug.join('/');
   const content = getMarkdown('docs', markdownPath);
   // Pass data to our component props
   return { props: { content } };
-}
-
-DocTemplate.propTypes = {
-  content: PropTypes.string.isRequired,
 };
 
 export default DocTemplate;

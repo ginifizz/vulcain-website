@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Tabs, Tab } from '@material-ui/core';
 import { METHODS } from '../data/methods';
 
-const useTabsStyles = makeStyles((theme) => ({
+const useTabsStyles = makeStyles<Theme>((theme) => ({
   root: {
     minHeight: 40,
   },
@@ -43,7 +42,7 @@ const useTabsStyles = makeStyles((theme) => ({
     },
   },
 }));
-const useTabItemStyles = makeStyles((theme) => ({
+const useTabItemStyles = makeStyles<Theme>((theme) => ({
   root: {
     minHeight: 30,
     minWidth: 100,
@@ -54,7 +53,12 @@ const useTabItemStyles = makeStyles((theme) => ({
   },
 }));
 
-const MethodSelector = ({ method, onMethodChange }) => {
+interface MethodSelectorProps {
+  method?: string;
+  onMethodChange: (val: string) => void;
+}
+
+const MethodSelector: React.ComponentType<MethodSelectorProps> = ({ onMethodChange, method }) => {
   const tabsStyles = useTabsStyles();
   const tabItemStyles = useTabItemStyles();
 
@@ -63,7 +67,7 @@ const MethodSelector = ({ method, onMethodChange }) => {
       textColor="primary"
       centered
       classes={tabsStyles}
-      value={method}
+      value={method || Object.keys(METHODS)[0]}
       onChange={(e, index) => onMethodChange(index)}
     >
       {Object.keys(METHODS).map((key) => (
@@ -71,15 +75,6 @@ const MethodSelector = ({ method, onMethodChange }) => {
       ))}
     </Tabs>
   );
-};
-
-MethodSelector.propTypes = {
-  method: PropTypes.string,
-  onMethodChange: PropTypes.func.isRequired,
-};
-
-MethodSelector.defaultProps = {
-  method: Object.keys(METHODS)[0],
 };
 
 export default MethodSelector;

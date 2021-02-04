@@ -2,17 +2,16 @@
 // TODO: could be a HOC
 import React from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core';
 import Header from './Header';
 import Link from 'next/link';
 import MUILink from '@material-ui/core/Link';
 
-const styles = (theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
@@ -43,7 +42,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-});
+}));
 
 const footers = [
   {
@@ -78,7 +77,9 @@ const footers = [
 ];
 
 // TODO: transform in HOC
-function Page({ classes, children, withFooter }) {
+const Page: React.ComponentType<{ withFooter?: boolean }> = ({ children, withFooter = true }) => {
+  const classes = useStyles();
+
   return (
     <>
       <CssBaseline />
@@ -122,16 +123,6 @@ function Page({ classes, children, withFooter }) {
       </main>
     </>
   );
-}
-
-Page.propTypes = {
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired,
-  withFooter: PropTypes.bool,
 };
 
-Page.defaultProps = {
-  withFooter: true,
-};
-
-export default withStyles(styles)(Page);
+export default Page;

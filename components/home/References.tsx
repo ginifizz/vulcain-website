@@ -1,9 +1,9 @@
 import React from 'react';
-import { Typography, Container, Grid } from '@material-ui/core';
+import { Typography, Container, Grid, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { logos } from '../../data/references';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     padding: theme.spacing(8, 0),
     backgroundColor: theme.palette.grey[100],
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const References = () => {
+const References: React.ComponentType = () => {
   const classes = useStyles();
 
   return (

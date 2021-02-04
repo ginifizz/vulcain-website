@@ -1,7 +1,7 @@
 import React from 'react';
 import { SvgIcon } from '@material-ui/core';
 
-const SlackIcon = (props) => (
+const SlackIcon: React.ComponentType = (props) => (
   <SvgIcon {...props}>
     <path
       d="M16.7,14.6l-9.3-2L7,14.5l9.3,1.9L16.7,14.6z M19.1,10.5l-7.3-6.1l-1.2,1.5l7.3,6.1L19.1,10.5z M17.6,12.4L9,8.4l-0.8,1.7

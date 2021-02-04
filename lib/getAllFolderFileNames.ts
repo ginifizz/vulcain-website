@@ -1,7 +1,7 @@
 const { resolve } = require('path');
 const { readdir } = require('fs').promises;
 
-async function getAllFiles(dir) {
+async function getAllFiles(dir: string) {
   const dirents = await readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
     dirents.map((dirent) => {
@@ -12,7 +12,7 @@ async function getAllFiles(dir) {
   return Array.prototype.concat(...files);
 }
 
-export async function getFiles(dir) {
+export async function getFiles(dir: string) {
   const files = await getAllFiles(dir);
   const basePath = resolve(dir) + '/';
   return files.map((file) => ({ params: { slug: file.replace(basePath, '').replace(/\.md$/, '').split('/') } }));

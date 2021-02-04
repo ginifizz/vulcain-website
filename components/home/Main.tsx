@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box, Typography, Container, Grid, Button, Hidden, Link as MuiLink } from '@material-ui/core';
+import { Box, Typography, Container, Grid, Button, Hidden, Link as MuiLink, Theme } from '@material-ui/core';
 import Link from 'next/link';
 import { makeStyles } from '@material-ui/core/styles';
 import Animation from './Animation';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     background: `url("/static/isometric.png") 140%, linear-gradient(315deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
     color: '#fff',
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Main = () => {
+const Main: React.ComponentType = () => {
   const classes = useStyles();
 
   return (

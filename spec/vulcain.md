@@ -16,13 +16,13 @@ surname="Dunglas"
 fullname="Kévin Dunglas"
 abbrev = "Les-Tilleuls.coop"
 organization = "Les-Tilleuls.coop"
-  [author.address]
-  email = "kevin@les-tilleuls.coop"
-  [author.address.postal]
-  city = "Lille"
-  street = "82 rue Winston Churchill"
-  code = "59160"
-  country = "France"
+[author.address]
+email = "kevin@les-tilleuls.coop"
+[author.address.postal]
+city = "Lille"
+street = "82 rue Winston Churchill"
+code = "59160"
+country = "France"
 %%%
 
 .# Abstract
@@ -30,16 +30,16 @@ organization = "Les-Tilleuls.coop"
 This specification defines new HTTP headers (and query parameters) allowing a client to inform the
 server of the exact data it needs:
 
- *  `Preload` informs the server that relations of the main requested resource will be necessary.
-    The server can then reduce the number of round-trips by sending the related resources ahead
-    of time using HTTP/2 [@!RFC7540] Server Push. When using Server Push isn't possible (resources
-    served by a different authority, client or server not supporting HTTP/2...), the server can hint
-    the client to fetch those resources as early as possible by using the `preload` link relation
-    [@!W3C.CR-preload-20190626] and the `103` status code [@!RFC8297].
+- `Preload` informs the server that relations of the main requested resource will be necessary.
+  The server can then reduce the number of round-trips by sending the related resources ahead
+  of time using HTTP/2 [@!RFC7540] Server Push. When using Server Push isn't possible (resources
+  served by a different authority, client or server not supporting HTTP/2...), the server can hint
+  the client to fetch those resources as early as possible by using the `preload` link relation
+  [@!W3C.CR-preload-20190626] and the `103` status code [@!RFC8297].
 
- *  `Fields` informs the server of the list of fields of the retrieved resources that will be used.
-    In order to improve performance and reduce bandwidth usage, the server can omit the fields not
-    requested.
+- `Fields` informs the server of the list of fields of the retrieved resources that will be used.
+  In order to improve performance and reduce bandwidth usage, the server can omit the fields not
+  requested.
 
 {mainmatter}
 
@@ -62,10 +62,10 @@ main resource it will need as soon as possible.
 `Preload` is a List Structured Header [@!I-D.ietf-httpbis-header-structure]. Its values `MUST` be
 Strings (Section 3.3.3 of [@!I-D.ietf-httpbis-header-structure]). Its ABNF is:
 
-~~~ abnf
+```abnf
 Preload = sf-list
 sf-item = sf-string
-~~~
+```
 
 Its values are selectors (#selectors) matching links to resources that `SHOULD` be preloaded. If a
 value is an empty String, then all links of the current documents are matched.
@@ -78,22 +78,22 @@ The server `MAY` limit the number resources that it sends in response to one req
 
 Example:
 
-~~~ http
+```http
 Preload: "/member/*/author", "/member/*/comments"
-~~~
+```
 
 The following optional parameters are defined:
 
- *  A Parameter whose name is `rel`, and whose value is a String (Section 3.3.3
-    of [@!I-D.ietf-httpbis-header-structure]) or a Token (Section 3.3.4 of
-    [@!I-D.ietf-httpbis-header-structure]), conveying the expected relation type of the selected
-    links.
+- A Parameter whose name is `rel`, and whose value is a String (Section 3.3.3
+  of [@!I-D.ietf-httpbis-header-structure]) or a Token (Section 3.3.4 of
+  [@!I-D.ietf-httpbis-header-structure]), conveying the expected relation type of the selected
+  links.
 
- *  A Parameter whose name is `hreflang`, and whose value is a String (Section 3.3.3 of
-    [@!I-D.ietf-httpbis-header-structure]), conveying the expected language of the selected links.
+- A Parameter whose name is `hreflang`, and whose value is a String (Section 3.3.3 of
+  [@!I-D.ietf-httpbis-header-structure]), conveying the expected language of the selected links.
 
- *  A Parameter whose name is `type`, and whose value is a String (Section 3.3.3 of
-    [@!I-D.ietf-httpbis-header-structure]), conveying the expected media type of the selected links.
+- A Parameter whose name is `type`, and whose value is a String (Section 3.3.3 of
+  [@!I-D.ietf-httpbis-header-structure]), conveying the expected media type of the selected links.
 
 The `rel` parameter contains a relation type as defined in [@!RFC5988]. If this parameter is
 provided, the server `SHOULD` preload only relations matched by the provided selector and having
@@ -120,19 +120,19 @@ matching the selector and constraints hinted by the parameters.
 
 Examples:
 
-~~~ http
+```http
 Preload: "/member/*/author"; hreflang="fr-FR"
 Preload: "/member/*/author/avatar"; type="image/webp"
-~~~
+```
 
 The server `SHOULD` preload all links matched by the `/member/*/author` selector and having a lang
 of `fr-FR`, as well as all links matching the `/member/*/author/avatar` selector and having a type
 of `image/webp`.
 
-~~~ http
+```http
 Preload: ""; rel=author
 Preload: ""; rel="https://example.com/custom-rel"
-~~~
+```
 
 The server `SHOULD` preload all links of the requested resource having the relation type `author` or
 `https://example.com/custom-rel`.
@@ -143,49 +143,46 @@ Considering the following resources:
 
 `/books`
 
-~~~ json
+```json
 {
-    "member": [
-        "/books/1",
-        "/books/2"
-    ]
+  "member": ["/books/1", "/books/2"]
 }
-~~~
+```
 
 `/books/1`
 
-~~~ json
+```json
 {
-    "title": "1984",
-    "author": "/authors/1"
+  "title": "1984",
+  "author": "/authors/1"
 }
-~~~
+```
 
 `/books/2`
 
-~~~ json
+```json
 {
-    "title": "Homage to Catalonia",
-    "author": "/authors/1"
+  "title": "Homage to Catalonia",
+  "author": "/authors/1"
 }
-~~~
+```
 
 `/authors/1`
 
-~~~ json
+```json
 {
-    "givenName": "George",
-    "familyName": "Orwell"
+  "givenName": "George",
+  "familyName": "Orwell"
 }
-~~~
+```
 
 The `Preload` HTTP header can be used to ask the server to immediately push resources related to the
 requested one:
 
-~~~ http
+```http
 GET /books/ HTTP/2
 Preload: "/member/*/author"
-~~~
+```
 
 In addition to `/books`, the server `SHOULD` use HTTP/2 Server Push to push the `/books/1`,
 `/books/2` and `/authors/1` resources. While it is referenced twice, `/authors/1` `MUST` be pushed
@@ -197,17 +194,17 @@ the remaining selector and pass it in the `Preload` header.
 
 Explicit Request:
 
-~~~ http
+```http
 GET /books/ HTTP/2
 Preload: "/member/*/author"
-~~~
+```
 
 Request to a relation generated by the server (for the push) and the client:
 
-~~~ http
+```http
 GET /books/1 HTTP/2
 Preload: "/author"
-~~~
+```
 
 ## Using Preload Link Relations
 
@@ -236,47 +233,47 @@ Considering the following resources:
 
 `/books/1`
 
-~~~ json
+```json
 {
-    "title": "1984",
-    "genre": "novel",
-    "author": "/authors/1"
+  "title": "1984",
+  "genre": "novel",
+  "author": "/authors/1"
 }
-~~~
+```
 
 `/authors/1`
 
-~~~ json
+```json
 {
-    "givenName": "George",
-    "familyName": "Orwell"
+  "givenName": "George",
+  "familyName": "Orwell"
 }
-~~~
+```
 
 And the following HTTP request:
 
-~~~ http
+```http
 GET /books/1 HTTP/2
 Preload: "/author"
 Fields: "/author/familyName", "/genre"
-~~~
+```
 
 The server must return a response containing the following JSON document:
 
-~~~ json
+```json
 {
-    "genre": "novel",
-    "author": "/authors/1"
+  "genre": "novel",
+  "author": "/authors/1"
 }
-~~~
+```
 
 And push the following filtered `/authors/1` resource:
 
-~~~ json
+```json
 {
-    "familyName": "Orwell"
+  "familyName": "Orwell"
 }
-~~~
+```
 
 Server Push requests generated by the server for related resources `MUST` include the remaining
 selector in a `Fields` HTTP header. When requesting a pushed relation, the client `MUST` compute the
@@ -286,17 +283,17 @@ Example:
 
 Explicit Request:
 
-~~~ http
+```http
 GET /books/ HTTP/2
 Fields: "/member/*/author"
-~~~
+```
 
 Request to a relation generated by the server (for the push) and the client:
 
-~~~ http
+```http
 GET /books/1 HTTP/2
 Fields: "/author"
-~~~
+```
 
 # Selectors
 
@@ -310,23 +307,23 @@ selectors used in `Preload` and `Fields` HTTP headers.
 The client can use the `Prefer` HTTP header [@!RFC7240] with the `selector` preference to ask the
 server to use a specific selector format:
 
-~~~ http
+```http
 GET /books/1 HTTP/2
 Accept: text/xml
 Prefer: selector=css
 Fields: "brand > name"
-~~~
+```
 
 If no explicit preferences have been passed, the server `MUST` assume that the selector format is
 the default corresponding to the format of the resource.
 
 The following table defines the default selector format for common formats:
 
-Format  | Selector format                                | Identifier
---------|------------------------------------------------|----------------
-JSON    | Extended JSON Pointer (#extended-json-pointer) | `json-pointer`
-XML     | XPath [@!W3C.REC-xpath-19991116]               | `xpath`
-HTML    | CSS selectors [@!W3C.REC-selectors-3-20181106] | `css`
+| Format | Selector format                                | Identifier     |
+| ------ | ---------------------------------------------- | -------------- |
+| JSON   | Extended JSON Pointer (#extended-json-pointer) | `json-pointer` |
+| XML    | XPath [@!W3C.REC-xpath-19991116]               | `xpath`        |
+| HTML   | CSS selectors [@!W3C.REC-selectors-3-20181106] | `css`          |
 
 The client and the server can negotiate the use of other selector formats using the `Prefer` HTTP
 header.
@@ -341,20 +338,20 @@ of a collection, the `*` character.
 
 Considering the following JSON document:
 
-~~~ json
+```json
 {
-    "books": [
-        {
-            "title": "1984",
-            "author": "George Orwell"
-        },
-        {
-            "title": "The Handmaid's Tale",
-            "author": "Margaret Atwood"
-        }
-    ]
+  "books": [
+    {
+      "title": "1984",
+      "author": "George Orwell"
+    },
+    {
+      "title": "The Handmaid's Tale",
+      "author": "Margaret Atwood"
+    }
+  ]
 }
-~~~
+```
 
 The `/books/*/author` JSON Pointer selects the `author` field of every objects in the `books` array.
 
@@ -398,7 +395,7 @@ For these reasons, using HTTP headers `SHOULD` be preferred. Support for query p
 
 Example:
 
-~~~ http
+```http
 GET /books/?preload=%22%2Fmember%2F%2A%2Fauthor%22 HTTP/2
 
 {
@@ -407,11 +404,11 @@ GET /books/?preload=%22%2Fmember%2F%2A%2Fauthor%22 HTTP/2
         "/books/1?preload=%22%2Fauthor%22"
     }
 }
-~~~
+```
 
 Example using parameters:
 
-~~~ http
+```http
 GET /books/?preload=%22%2Fmember%2F%2A%22%3B%20rel%3Dauthor HTTP/2
 
 {
@@ -420,7 +417,7 @@ GET /books/?preload=%22%2Fmember%2F%2A%22%3B%20rel%3Dauthor HTTP/2
         "/books/1?preload=%22%22%3B%20rel%3Dauthor"
     }
 }
-~~~
+```
 
 # Computing Links Server-Side
 
@@ -438,28 +435,28 @@ references the resources `/authors/{id}` resource:
 
 `/books/1`
 
-~~~ json
+```json
 {
-    "title": "1984",
-    "author": 1
+  "title": "1984",
+  "author": 1
 }
-~~~
+```
 
 `/authors/1`
 
-~~~ json
+```json
 {
-    "givenName": "George",
-    "familyName": "Orwell"
+  "givenName": "George",
+  "familyName": "Orwell"
 }
-~~~
+```
 
 In response to this request , both `/books/1` and `/authors/1` should be pushed:
 
-~~~ http
+```http
 GET /books/1 HTTP/2
 Preload: "/author"
-~~~
+```
 
 # Security Considerations
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { AppBar, Button, IconButton, Box, Toolbar, Hidden, Link as MuiLink } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
@@ -7,7 +6,7 @@ import { useRouter } from 'next/router';
 import useStyles from './style';
 import MobileMenu from '../MobileMenu';
 
-const Header = () => {
+const Header: React.ComponentType = () => {
   const classes = useStyles();
   const { pathname, asPath } = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -16,7 +15,7 @@ const Header = () => {
 
   return (
     <>
-      <MuiLink href="https://mercure.rocks/" underline="none" variant="body2" width="100%" className={classes.mercure}>
+      <MuiLink href="https://mercure.rocks/" underline="none" variant="body2" className={classes.mercure}>
         Discover
         <img src="/static/logo-mercure.svg" alt="mercure" />| Real-Time with ease
       </MuiLink>
@@ -32,16 +31,13 @@ const Header = () => {
           </a>
           <Hidden smDown initialWidth="md">
             <Box px={1} flex={1} height="100%">
-              <Link href="/docs" passHref>
-                <Button
-                  className={`${classes.menuLink} ${pathname === '/docs' && !spec ? 'active' : ''}`}
-                  component="a"
-                >
+              <Link href="/docs/getting-started" passHref>
+                <Button className={`${classes.menuLink} ${pathname.includes('/docs') ? 'active' : ''}`} component="a">
                   Documentation
                 </Button>
               </Link>
-              <Link href="/spec">
-                <Button className={`${classes.menuLink} ${spec ? 'active' : ''}`} component="a">
+              <Link href="/spec/vulcain">
+                <Button className={`${classes.menuLink} ${pathname.includes('/spec') ? 'active' : ''}`} component="a">
                   Specification
                 </Button>
               </Link>
@@ -82,12 +78,6 @@ const Header = () => {
       <MobileMenu onClose={() => setIsDrawerOpen(false)} open={isDrawerOpen} />
     </>
   );
-};
-
-Header.propTypes = {
-  user: PropTypes.shape({
-    email: PropTypes.string,
-  }),
 };
 
 export default Header;
