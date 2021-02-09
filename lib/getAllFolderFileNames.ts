@@ -15,5 +15,7 @@ async function getAllFiles(dir: string) {
 export async function getFiles(dir: string) {
   const files = await getAllFiles(dir);
   const basePath = resolve(dir) + '/';
-  return files.map((file) => ({ params: { slug: file.replace(basePath, '').replace(/\.md$/, '').split('/') } }));
+  return files
+    .filter((file) => /\.md$/.test(file))
+    .map((file) => ({ params: { slug: file.replace(basePath, '').replace(/\.md$/, '').split('/') } }));
 }

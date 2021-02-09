@@ -33,7 +33,9 @@ const Heading: React.ComponentType<HeadingProps> = ({ children, level }) => {
     return t;
   }
 
-  const title = t.props.children[0].props.children;
+  const title = text;
+
+  //const title = t.props.children[0].props.children;
   return (
     <>
       <Head>

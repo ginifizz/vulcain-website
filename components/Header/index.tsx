@@ -8,10 +8,8 @@ import MobileMenu from '../MobileMenu';
 
 const Header: React.ComponentType = () => {
   const classes = useStyles();
-  const { pathname, asPath } = useRouter();
+  const { pathname } = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const spec = asPath.startsWith('/spec');
 
   return (
     <>
@@ -27,7 +25,7 @@ const Header: React.ComponentType = () => {
             </Button>
           </Link>
           <a href="https://les-tilleuls.coop/en" target="_blank" rel="noopener noreferrer">
-            <img className={classes.sponsor} src="/static/sponsor.svg" />
+            <img className={classes.sponsor} alt="sponsor" src="/static/sponsor.svg" />
           </a>
           <Hidden smDown initialWidth="md">
             <Box px={1} flex={1} height="100%">

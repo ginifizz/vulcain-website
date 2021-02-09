@@ -2,9 +2,11 @@ import React, { Children } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
+import tabs from '../../lib/tabsPlugin';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import MUILink from '@material-ui/core/Link';
+import { Typography, Link as MUILink } from '@material-ui/core';
+import { TabPanel } from '@material-ui/lab';
+import TabsList from './TabsList';
 import CodeBlock from './CodeBlock';
 import Heading from './Heading';
 
@@ -26,7 +28,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
     textShadow: 'white 0px 1px',
   },
   image: {
-    maxWidth: '800px',
+    maxWidth: '900px',
+    margin: '0 auto',
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
@@ -49,13 +52,17 @@ const Markdown: React.ComponentType<MarkdownProps> = ({ source }) => {
     }
     return `[@${p1}](${href})`;
   };
+  // adds proper href to RFC links
   const formattedSource = source.replace(/\[@!?(.*?)\]/gm, replacer);
+
   return (
     <ReactMarkdown
-      plugins={[gfm]}
-      transformImageUri={(input) =>
-        /^https?:/.test(input) ? input : `https://raw.githubusercontent.com/dunglas/vulcain/master/${input}`
-      }
+      plugins={[gfm, tabs]}
+      transformImageUri={(input) => {
+        if (/^https?:/.test(input)) return input;
+        if (/^schemas\/vulcain_doc/.test(input)) return input.replace('schemas', '/static/schemas');
+        return `https://raw.githubusercontent.com/dunglas/vulcain/master/${input}`;
+      }}
       transformLinkUri={(input) => {
         if (!input || /^#|(https?|mailto):/.test(input)) {
           return input;
@@ -68,6 +75,8 @@ const Markdown: React.ComponentType<MarkdownProps> = ({ source }) => {
       }}
       renderers={{
         code: CodeBlock,
+        tabs: ({ children, tabs }) => <TabsList tabs={tabs}>{children}</TabsList>,
+        tab: ({ value, children }) => <TabPanel value={value}>{children}</TabPanel>,
         inlineCode: ({ value }) => <code className={classes.inlineCode}>{value}</code>,
         paragraph: (props) => <Typography variant="body2" paragraph {...props} />,
         heading: Heading,
